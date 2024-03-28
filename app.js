@@ -10,7 +10,7 @@ let items = [];
 function toggleItem(btn, itemId, price){
     let item = items.find(i => i.id === itemId);
     if(!item){
-        let newItem = {id: itemId, price: price};
+        let newItem = {id: itemId, price: price, quantity: 0};
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
@@ -41,7 +41,7 @@ Telegram.WebApp.onEvent("mainButtonClicked", function(){
 });
 
 function calculateTotalPrice(){
-    return items.reduce((total, item) => total + item.price, 0);
+    return items.reduce((total, item) => total + item.price * quantity, 0);
 }
 
 document.getElementById("btn1").addEventListener("click", function(){
