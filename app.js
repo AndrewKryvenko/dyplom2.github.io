@@ -355,14 +355,14 @@ document.getElementById("btn92").addEventListener("click", function(){
 });
 
 
-// Находим все кнопки minusBtn и plusBtn
-let minusBtns = document.querySelectorAll('.minus-btn');
-let plusBtns = document.querySelectorAll('.plus-btn');
-let quantityDisplays = document.querySelectorAll('.quantity');
-let addButton = document.querySelectorAll('.addButton');
-let priceDisplays = document.querySelectorAll('.price');
+	// Находим все кнопки minusBtn и plusBtn
+	let minusBtns = document.querySelectorAll('.minus-btn');
+	let plusBtns = document.querySelectorAll('.plus-btn');
+	let quantityDisplays = document.querySelectorAll('.quantity');
+	let addButton = document.querySelectorAll('.addButton');
+	let priceDisplays = document.querySelectorAll('.price');
 
-// Функция для обновления количества товара
+	// Функция для обновления количества товара
 function updateQuantity(increment, index) {
     let quantity = parseInt(quantityDisplays[index].innerText);
     if (increment) {
@@ -373,51 +373,63 @@ function updateQuantity(increment, index) {
         }
     }
     quantityDisplays[index].innerText = quantity;
-    updateTotalPrice(index);
-}
-
-// Функция для обновления цены
-function updateTotalPrice(index) {
-    let quantity = parseInt(quantityDisplays[index].innerText);
-    let initialPrice = parseFloat(document.querySelectorAll('.item')[index].getAttribute('data-initial-price'));
-    let totalPrice;
-    if (quantity > 0) { // Если количество больше 0, используем обычный расчет цены
-        totalPrice = quantity * initialPrice;
-    } else { // Если количество равно 0, используем начальную цену
-        totalPrice = initialPrice;
-    }
-    priceDisplays[index].innerText = totalPrice.toFixed(2) + " грн";
-}
-
-// Присваиваем обработчики событий для всех кнопок минус и плюс
-for (let i = 0; i < minusBtns.length; i++) {
-    minusBtns[i].addEventListener("click", function() {
-        updateQuantity(false, i);
-    });
-
-    plusBtns[i].addEventListener("click", function() {
-        updateQuantity(true, i);
-    });
-
-    addButton[i].addEventListener("click", function() {
-        updateTotalPrice(i);
-    });
+    updateTotalPrice(index, quantity); // Передаем количество товара для обновления цены
 }
 
 
+	// Функция для обновления цены
+	function updateTotalPrice(index) {
+		let quantity = parseInt(quantityDisplays[index].innerText);
+		let initialPrice = parseFloat(document.querySelectorAll('.item')[index].getAttribute('data-initial-price'));
+		let totalPrice;
+		if (quantity > 0) { // Если количество больше 0, используем обычный расчет цены
+			totalPrice = quantity * initialPrice;
+		} else { // Если количество равно 0, используем начальную цену
+			totalPrice = initialPrice;
+		}
+		priceDisplays[index].innerText = totalPrice.toFixed(2) + " грн";
+		updateMainButtonTotalPrice();
+	}
+
+	// Присваиваем обработчики событий для всех кнопок минус и плюс
+	for (let i = 0; i < minusBtns.length; i++) {
+		minusBtns[i].addEventListener("click", function() {
+			updateQuantity(false, i);
+		});
+
+		plusBtns[i].addEventListener("click", function() {
+			updateQuantity(true, i);
+		});
+
+		addButton[i].addEventListener("click", function() {
+			updateTotalPrice(i);
+		});
+	}
+
+	// Функция для обновления общей цены
+function updateMainButtonTotalPrice() {
+    let totalQuantity = Array.from(quantityDisplays).reduce((total, display) => total + parseInt(display.innerText), 0);
+    let totalPrice = Array.from(priceDisplays).reduce((total, display) => {
+        let price = parseFloat(display.innerText.replace(" грн", ""));
+        return total + price;
+    }, 0);
+    tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн за ${totalQuantity} товарів`);
+}
+
+	updateMainButtonTotalPrice();
 
 
-Telegram.WebApp.onEvent("mainButtonClicked", function() {
-    tg.sendData(selectedItems.join(', '));
-});
+	Telegram.WebApp.onEvent("mainButtonClicked", function() {
+		tg.sendData(selectedItems.join(', '));
+	});
 
-let usercard = document.getElementById("usercard");
+	let usercard = document.getElementById("usercard");
 
-let p = document.createElement("p");
+	let p = document.createElement("p");
 
-p.innerText = `${tg.initDataUnsafe.user.first_name}
-${tg.initDataUnsafe.user.last_name}`;
+	p.innerText = `${tg.initDataUnsafe.user.first_name}
+	${tg.initDataUnsafe.user.last_name}`;
 
-usercard.appendChild(p);
+	usercard.appendChild(p);
 
 
