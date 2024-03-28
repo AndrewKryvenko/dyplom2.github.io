@@ -89,7 +89,7 @@ document.getElementById("btn1").addEventListener("click", function(){
 	toggleItem(this, "item1", 58, 1);
 });
 document.getElementById("btn2").addEventListener("click", function(){
-	toggleItem(this, "item2", 68, 2);
+	toggleItem(this, "item2", 68);
 });
 document.getElementById("btn3").addEventListener("click", function(){
 	toggleItem(this, "item3", 105);
