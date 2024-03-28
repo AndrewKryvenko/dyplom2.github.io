@@ -44,27 +44,31 @@ for (let i = 0; i < minusBtns.length; i++) {
 
 let items = [];
 
-function toggleItem(btn, itemId, price, index) {
+function toggleItem(btn, itemId, price, quantity) {
     let itemIndex = items.findIndex(i => i.id === itemId);
     if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price, quantity: parseInt(quantityDisplays[index].innerText) };
+        let newItem = { id: itemId, price: price, quantity: quantity };
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
     } else {
-        items[itemIndex].quantity = parseInt(quantityDisplays[index].innerText); // Обновляем количество товара
+        let totalPrice = price * quantity;
+        let prevTotalPrice = calculateTotalPrice();
+        
+        items.splice(itemIndex, 1); // Удаляем товар из списка
+
+        let currentTotalPrice = calculateTotalPrice();
+        if (currentTotalPrice === 0) {
+            tg.MainButton.hide(); // Если общая сумма равна 0, скрываем кнопку "Загальна вартість"
+        } else {
+            tg.MainButton.setText(`Загальна вартість: ${currentTotalPrice.toFixed(2)} грн`);
+        }
+
+        if (prevTotalPrice !== currentTotalPrice && tg.MainButton.isVisible) {
+            tg.MainButton.setText(`Загальна вартість: ${currentTotalPrice.toFixed(2)} грн`);
+        }
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
-    }
-    
-    let totalPrice = calculateTotalPrice();
-    if (totalPrice > 0) {
-        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
-        if (!tg.MainButton.isVisible) {
-            tg.MainButton.show();
-        }
-    } else {
-        tg.MainButton.hide();
     }
 }
 
