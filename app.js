@@ -24,7 +24,6 @@ let priceDisplays = document.querySelectorAll('.price');
 			}
 		}
 		quantityDisplays[index].innerText = quantity;
-		updateTotalPrice(index);
 	}
 
 
