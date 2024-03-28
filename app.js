@@ -27,18 +27,6 @@ let priceDisplays = document.querySelectorAll('.price');
 		updateTotalPrice(index);
 	}
 
-	// Функция для обновления цены
-	function updateTotalPrice(index) {
-		let quantity = parseInt(quantityDisplays[index].innerText);
-		let initialPrice = parseFloat(document.querySelectorAll('.item')[index].getAttribute('data-initial-price'));
-		let totalPrice;
-		if (quantity > 0) { // Если количество больше 0, используем обычный расчет цены
-			totalPrice = quantity * initialPrice;
-		} else { // Если количество равно 0, используем начальную цену
-			totalPrice = initialPrice;
-		}
-		priceDisplays[index].innerText = totalPrice.toFixed(2) + " грн";
-	}
 
 	// Присваиваем обработчики событий для всех кнопок минус и плюс
 for (let i = 0; i < minusBtns.length; i++) {
