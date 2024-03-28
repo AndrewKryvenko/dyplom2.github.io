@@ -46,24 +46,21 @@ let items = [];
 
 function toggleItem(btn, itemId, price, index) {
     let itemIndex = items.findIndex(i => i.id === itemId);
-    let quantity = parseInt(quantityDisplays[index].innerText); // Получаем текущее количество товара
+    let quantity = parseInt(quantityDisplays[index].innerText); // Получаем количество товара
     if (itemIndex === -1) {
         let newItem = { id: itemId, price: price, quantity: quantity };
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
     } else {
-        let removedItem = items.splice(itemIndex, 1)[0]; // Удаляем элемент из массива и получаем его
-        // Обновляем количество товара на экране
-        quantityDisplays[index].innerText = 1;
-        // Вычитаем цену удаленного товара из общей цены
-        let removedTotalPrice = removedItem.price * removedItem.quantity;
-        tg.MainButton.setText(`Загальна вартість: ${(calculateTotalPrice() - removedTotalPrice).toFixed(2)} грн`);
+        items[itemIndex].quantity = quantity; // Обновляем количество товара
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
     }
     
-    if (calculateTotalPrice() > 0) {
+    let totalPrice = calculateTotalPrice();
+    if (totalPrice > 0) {
+        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
         if (!tg.MainButton.isVisible) {
             tg.MainButton.show();
         }
