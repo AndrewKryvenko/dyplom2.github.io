@@ -41,7 +41,7 @@ Telegram.WebApp.onEvent("mainButtonClicked", function(){
 });
 
 function calculateTotalPrice(){
-    return items.reduce((total, item) => total + item.price, 0);
+    return items.reduce((total, item, quantity) => total + (quantity * item.price), 0);
 }
 
 document.getElementById("btn1").addEventListener("click", function(){
