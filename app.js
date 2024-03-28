@@ -33,15 +33,16 @@ function updateQuantity(increment, index) {
 
 // Присваиваем обработчики событий для всех кнопок минус и плюс
 for (let i = 0; i < minusBtns.length; i++) {
-   minusBtns[i].addEventListener("click", function() {
+    minusBtns[i].addEventListener("click", function() {
         updateQuantity(false, i);
-        toggleItem(addButton[i], "item" + (i + 1), parseFloat(priceDisplays[i].innerText), parseInt(quantityDisplays[i].innerText));
+        updateTotalPrice();
     });
 
     plusBtns[i].addEventListener("click", function() {
         updateQuantity(true, i);
-        toggleItem(addButton[i], "item" + (i + 1), parseFloat(priceDisplays[i].innerText), parseInt(quantityDisplays[i].innerText));
+        updateTotalPrice();
     });
+
     addButton[i].addEventListener("click", function() {
         toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), parseInt(quantityDisplays[i].innerText));
     });
