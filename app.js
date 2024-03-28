@@ -5,27 +5,29 @@ tg.expand();
 tg.MainButton.textColor = '#FFFFFF';
 tg.MainButton.color = '#ffbb00';
 
-// Находим все кнопки minusBtn и plusBtn
+
+	// Находим все кнопки minusBtn и plusBtn
 let minusBtns = document.querySelectorAll('.minus-btn');
 let plusBtns = document.querySelectorAll('.plus-btn');
 let quantityDisplays = document.querySelectorAll('.quantity');
 let addButton = document.querySelectorAll('.addButton');
 let priceDisplays = document.querySelectorAll('.price');
 
-// Функция для обновления количества товара
-function updateQuantity(increment, index) {
-    let quantity = parseInt(quantityDisplays[index].innerText);
-    if (increment) {
-        quantity++;
-    } else {
-        if (quantity > 1) {
-            quantity--;
-        }
-    }
-    quantityDisplays[index].innerText = quantity;
-}
+	// Функция для обновления количества товара
+	function updateQuantity(increment, index) {
+		let quantity = parseInt(quantityDisplays[index].innerText);
+		if (increment) {
+			quantity++;
+		} else {
+			if (quantity > 1) {
+				quantity--;
+			}
+		}
+		quantityDisplays[index].innerText = quantity;
+	}
 
-// Присваиваем обработчики событий для всех кнопок минус и плюс
+
+	// Присваиваем обработчики событий для всех кнопок минус и плюс
 for (let i = 0; i < minusBtns.length; i++) {
     minusBtns[i].addEventListener("click", function() {
         updateQuantity(false, i);
@@ -36,21 +38,22 @@ for (let i = 0; i < minusBtns.length; i++) {
     });
 
     addButton[i].addEventListener("click", function() {
-        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
+        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText));
     });
 }
 
+
 let items = [];
 
-function toggleItem(btn, itemId, price, index) {
+function toggleItem(btn, itemId, price) {
     let itemIndex = items.findIndex(i => i.id === itemId);
     if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price, quantity: parseInt(quantityDisplays[index].innerText) };
+        let newItem = { id: itemId, price: price, quantity: 1 };
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
     } else {
-        items[itemIndex].quantity = parseInt(quantityDisplays[index].innerText); // Обновляем количество товара
+        items[itemIndex].quantity++; // Увеличиваем количество товара на 1
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
     }
