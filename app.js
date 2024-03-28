@@ -46,14 +46,13 @@ let items = [];
 
 function toggleItem(btn, itemId, price, index) {
     let itemIndex = items.findIndex(i => i.id === itemId);
-    let quantity = parseInt(quantityDisplays[index].innerText); // Получаем количество товара
     if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price, quantity: quantity };
+        let newItem = { id: itemId, price: price, quantity: parseInt(quantityDisplays[index].innerText) };
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
     } else {
-        items[itemIndex].quantity = quantity; // Обновляем количество товара
+        items[itemIndex].quantity = parseInt(quantityDisplays[index].innerText); // Обновляем количество товара
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
     }
@@ -85,11 +84,12 @@ function calculateTotalPrice() {
     return totalPrice;
 }
 
+
 document.getElementById("btn1").addEventListener("click", function(){
-	toggleItem(this, "item1", 58);
+	toggleItem(this, "item1", 58, 1);
 });
 document.getElementById("btn2").addEventListener("click", function(){
-	toggleItem(this, "item2", 68);
+	toggleItem(this, "item2", 68, 2);
 });
 document.getElementById("btn3").addEventListener("click", function(){
 	toggleItem(this, "item3", 105);
