@@ -11,6 +11,7 @@ let plusBtns = document.querySelectorAll('.plus-btn');
 let quantityDisplays = document.querySelectorAll('.quantity');
 let addButton = document.querySelectorAll('.addButton');
 let priceDisplays = document.querySelectorAll('.price');
+let totalButton = document.getElementById('totalButton');
 
 // Функция для обновления количества товара
 function updateQuantity(increment, index) {
@@ -25,22 +26,36 @@ function updateQuantity(increment, index) {
     quantityDisplays[index].innerText = quantity;
 }
 
+// Функция для отображения общей стоимости
+function updateTotalPrice() {
+    let totalPrice = calculateTotalPrice();
+    if (totalPrice > 0) {
+        totalButton.innerText = `Загальна вартість: ${totalPrice.toFixed(2)} грн`;
+        if (!totalButton.isVisible) {
+            totalButton.show();
+        }
+    } else {
+        totalButton.hide();
+    }
+}
 
 // Присваиваем обработчики событий для всех кнопок минус и плюс
 for (let i = 0; i < minusBtns.length; i++) {
     minusBtns[i].addEventListener("click", function() {
         updateQuantity(false, i);
+        updateTotalPrice(); // Обновляем общую стоимость при изменении количества товара
     });
 
     plusBtns[i].addEventListener("click", function() {
         updateQuantity(true, i);
+        updateTotalPrice(); // Обновляем общую стоимость при изменении количества товара
     });
 
     addButton[i].addEventListener("click", function() {
-        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
+        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), parseInt(quantityDisplays[i].innerText));
+        updateTotalPrice(); // Обновляем общую стоимость при добавлении товара
     });
 }
-
 
 let items = [];
 
@@ -52,29 +67,11 @@ function toggleItem(btn, itemId, price, quantity) {
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
     } else {
-        items[itemIndex].quantity = quantity; // Обновляем количество товара
+        items.splice(itemIndex, 1); // Удаляем товар из массива
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
     }
-    
-    let totalPrice = calculateTotalPrice();
-    if (totalPrice > 0) {
-        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
-        if (!tg.MainButton.isVisible) {
-            tg.MainButton.show();
-        }
-    } else {
-        tg.MainButton.hide();
-    }
 }
-
-Telegram.WebApp.onEvent("mainButtonClicked", function(){
-    let data = {
-        items: items.map(item => ({id: item.id, price: item.price, quantity: item.quantity})),
-        totalPrice: calculateTotalPrice(),
-    };
-    tg.sendData(JSON.stringify(data));
-});
 
 function calculateTotalPrice() {
     let totalPrice = 0;
@@ -84,6 +81,10 @@ function calculateTotalPrice() {
     return totalPrice;
 }
 
+totalButton.addEventListener('click', function() {
+    items = []; // Очищаем массив товаров
+    totalButton.hide(); // Скрываем кнопку "Загальна вартість"
+});
 
 document.getElementById("btn1").addEventListener("click", function(){
 	toggleItem(this, "item1", 58, 1);
