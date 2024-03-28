@@ -5,6 +5,57 @@ tg.expand();
 tg.MainButton.textColor = '#FFFFFF';
 tg.MainButton.color = '#ffbb00';
 
+
+	// Находим все кнопки minusBtn и plusBtn
+let minusBtns = document.querySelectorAll('.minus-btn');
+let plusBtns = document.querySelectorAll('.plus-btn');
+let quantityDisplays = document.querySelectorAll('.quantity');
+let addButton = document.querySelectorAll('.addButton');
+let priceDisplays = document.querySelectorAll('.price');
+
+	// Функция для обновления количества товара
+	function updateQuantity(increment, index) {
+		let quantity = parseInt(quantityDisplays[index].innerText);
+		if (increment) {
+			quantity++;
+		} else {
+			if (quantity > 1) {
+				quantity--;
+			}
+		}
+		quantityDisplays[index].innerText = quantity;
+		updateTotalPrice(index);
+	}
+
+	// Функция для обновления цены
+	function updateTotalPrice(index) {
+		let quantity = parseInt(quantityDisplays[index].innerText);
+		let initialPrice = parseFloat(document.querySelectorAll('.item')[index].getAttribute('data-initial-price'));
+		let totalPrice;
+		if (quantity > 0) { // Если количество больше 0, используем обычный расчет цены
+			totalPrice = quantity * initialPrice;
+		} else { // Если количество равно 0, используем начальную цену
+			totalPrice = initialPrice;
+		}
+		priceDisplays[index].innerText = totalPrice.toFixed(2) + " грн";
+	}
+
+	// Присваиваем обработчики событий для всех кнопок минус и плюс
+for (let i = 0; i < minusBtns.length; i++) {
+    minusBtns[i].addEventListener("click", function() {
+        updateQuantity(false, i);
+    });
+
+    plusBtns[i].addEventListener("click", function() {
+        updateQuantity(true, i);
+    });
+
+    addButton[i].addEventListener("click", function() {
+        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText));
+    });
+}
+
+
 let items = [];
 
 function toggleItem(btn, itemId, price) {
@@ -353,70 +404,5 @@ document.getElementById("btn92").addEventListener("click", function(){
 	toggleItem(this, "item92", 72);
 });
 
-
-	// Находим все кнопки minusBtn и plusBtn
-	let minusBtns = document.querySelectorAll('.minus-btn');
-	let plusBtns = document.querySelectorAll('.plus-btn');
-	let quantityDisplays = document.querySelectorAll('.quantity');
-	let addButton = document.querySelectorAll('.addButton');
-	let priceDisplays = document.querySelectorAll('.price');
-
-	// Функция для обновления количества товара
-	function updateQuantity(increment, index) {
-		let quantity = parseInt(quantityDisplays[index].innerText);
-		if (increment) {
-			quantity++;
-		} else {
-			if (quantity > 1) {
-				quantity--;
-			}
-		}
-		quantityDisplays[index].innerText = quantity;
-		updateTotalPrice(index);
-	}
-
-	// Функция для обновления цены
-	function updateTotalPrice(index) {
-		let quantity = parseInt(quantityDisplays[index].innerText);
-		let initialPrice = parseFloat(document.querySelectorAll('.item')[index].getAttribute('data-initial-price'));
-		let totalPrice;
-		if (quantity > 0) { // Если количество больше 0, используем обычный расчет цены
-			totalPrice = quantity * initialPrice;
-		} else { // Если количество равно 0, используем начальную цену
-			totalPrice = initialPrice;
-		}
-		priceDisplays[index].innerText = totalPrice.toFixed(2) + " грн";
-	}
-
-	// Присваиваем обработчики событий для всех кнопок минус и плюс
-for (let i = 0; i < minusBtns.length; i++) {
-    minusBtns[i].addEventListener("click", function() {
-        updateQuantity(false, i);
-    });
-
-    plusBtns[i].addEventListener("click", function() {
-        updateQuantity(true, i);
-    });
-
-    addButton[i].addEventListener("click", function() {
-        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText));
-    });
-}
-
-
-
-
-	Telegram.WebApp.onEvent("mainButtonClicked", function() {
-		tg.sendData(selectedItems.join(', '));
-	});
-
-	let usercard = document.getElementById("usercard");
-
-	let p = document.createElement("p");
-
-	p.innerText = `${tg.initDataUnsafe.user.first_name}
-	${tg.initDataUnsafe.user.last_name}`;
-
-	usercard.appendChild(p);
 
 
