@@ -68,10 +68,12 @@ function toggleItem(btn, itemId, price, quantity) {
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
+        updateTotalPrice(); // Показываем кнопку с общей стоимостью при добавлении товара
     } else {
         items.splice(itemIndex, 1); // Удаляем товар из массива
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
+        updateTotalPrice(); // Обновляем общую стоимость при удалении товара
     }
 }
 
@@ -96,7 +98,6 @@ totalButton.addEventListener('click', function() {
     items = []; // Очищаем массив товаров
     totalButton.hide(); // Скрываем кнопку "Загальна вартість"
 });
-
 
 document.getElementById("btn1").addEventListener("click", function(){
 	toggleItem(this, "item1", 58, 1);
