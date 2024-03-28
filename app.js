@@ -23,7 +23,7 @@ function toggleItem(btn, itemId, price){
     
     let totalPrice = calculateTotalPrice();
     if(totalPrice > 0){
-        tg.MainButton.setText(`Загальна вартість: ${totalPrice}`);
+        tg.MainButton.setText(`Загальна вартість: ${totalPrice * quantity}`);
         if(!tg.MainButton.isVisible){
             tg.MainButton.show();
         }
