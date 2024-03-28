@@ -11,7 +11,12 @@ let plusBtns = document.querySelectorAll('.plus-btn');
 let quantityDisplays = document.querySelectorAll('.quantity');
 let addButton = document.querySelectorAll('.addButton');
 let priceDisplays = document.querySelectorAll('.price');
-let totalButton = document.getElementById('totalButton');
+
+// Создаем кнопку для отображения общей стоимости
+let totalButton = document.createElement('button');
+totalButton.id = 'totalButton';
+totalButton.style.display = 'none'; // Начинаем с скрытой кнопки
+document.body.appendChild(totalButton);
 
 // Функция для обновления количества товара
 function updateQuantity(increment, index) {
@@ -26,36 +31,20 @@ function updateQuantity(increment, index) {
     quantityDisplays[index].innerText = quantity;
 }
 
-// Функция для отображения общей стоимости
-function updateTotalPrice() {
-    let totalPrice = calculateTotalPrice();
-    if (totalPrice > 0) {
-        totalButton.innerText = `Загальна вартість: ${totalPrice.toFixed(2)} грн`;
-        if (!totalButton.isVisible) {
-            totalButton.show();
-        }
-    } else {
-        totalButton.hide();
-    }
-}
-
 // Присваиваем обработчики событий для всех кнопок минус и плюс
 for (let i = 0; i < minusBtns.length; i++) {
     minusBtns[i].addEventListener("click", function() {
         updateQuantity(false, i);
-        updateTotalPrice(); // Обновляем общую стоимость при изменении количества товара
-        updateItemPrice(i); // Обновляем цену товара в корзине при изменении количества товара
+        updateTotalPrice();
     });
 
     plusBtns[i].addEventListener("click", function() {
         updateQuantity(true, i);
-        updateTotalPrice(); // Обновляем общую стоимость при изменении количества товара
-        updateItemPrice(i); // Обновляем цену товара в корзине при изменении количества товара
+        updateTotalPrice();
     });
 
     addButton[i].addEventListener("click", function() {
         toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), parseInt(quantityDisplays[i].innerText));
-        updateTotalPrice(); // Обновляем общую стоимость при добавлении или удалении товара
     });
 }
 
@@ -64,25 +53,26 @@ let items = [];
 function toggleItem(btn, itemId, price, quantity) {
     let itemIndex = items.findIndex(i => i.id === itemId);
     if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price * quantity, quantity: quantity }; // Умножаем цену на количество
+        let newItem = { id: itemId, price: price * quantity, quantity: quantity };
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
-        updateTotalPrice(); // Показываем кнопку с общей стоимостью при добавлении товара
     } else {
-        items.splice(itemIndex, 1); // Удаляем товар из массива
+        items.splice(itemIndex, 1);
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
-        updateTotalPrice(); // Обновляем общую стоимость при удалении товара
     }
+    updateTotalPrice();
 }
 
-// Функция для обновления цены товара в корзине
-function updateItemPrice(index) {
-    let item = items[index];
-    if (item) {
-        let newPrice = parseFloat(priceDisplays[index].innerText) * parseInt(quantityDisplays[index].innerText);
-        item.price = newPrice.toFixed(2); // Умножаем цену на количество и обновляем в массиве товаров
+// Функция для отображения общей стоимости
+function updateTotalPrice() {
+    let totalPrice = calculateTotalPrice();
+    if (totalPrice > 0) {
+        totalButton.innerText = `Загальна вартість: ${totalPrice.toFixed(2)} грн`;
+        totalButton.style.display = 'block'; // Показываем кнопку
+    } else {
+        totalButton.style.display = 'none'; // Скрываем кнопку
     }
 }
 
@@ -95,8 +85,8 @@ function calculateTotalPrice() {
 }
 
 totalButton.addEventListener('click', function() {
-    items = []; // Очищаем массив товаров
-    totalButton.hide(); // Скрываем кнопку "Загальна вартість"
+    items = [];
+    totalButton.style.display = 'none'; // Скрываем кнопку при нажатии
 });
 
 document.getElementById("btn1").addEventListener("click", function(){
