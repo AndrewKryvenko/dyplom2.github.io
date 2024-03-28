@@ -44,11 +44,13 @@ for (let i = 0; i < minusBtns.length; i++) {
     minusBtns[i].addEventListener("click", function() {
         updateQuantity(false, i);
         updateTotalPrice(); // Обновляем общую стоимость при изменении количества товара
+        updateItemPrice(i); // Обновляем цену товара в корзине при изменении количества товара
     });
 
     plusBtns[i].addEventListener("click", function() {
         updateQuantity(true, i);
         updateTotalPrice(); // Обновляем общую стоимость при изменении количества товара
+        updateItemPrice(i); // Обновляем цену товара в корзине при изменении количества товара
     });
 
     addButton[i].addEventListener("click", function() {
@@ -62,7 +64,7 @@ let items = [];
 function toggleItem(btn, itemId, price, quantity) {
     let itemIndex = items.findIndex(i => i.id === itemId);
     if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price, quantity: quantity };
+        let newItem = { id: itemId, price: price * quantity, quantity: quantity }; // Умножаем цену на количество
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
@@ -73,10 +75,19 @@ function toggleItem(btn, itemId, price, quantity) {
     }
 }
 
+// Функция для обновления цены товара в корзине
+function updateItemPrice(index) {
+    let item = items[index];
+    if (item) {
+        let newPrice = parseFloat(priceDisplays[index].innerText) * parseInt(quantityDisplays[index].innerText);
+        item.price = newPrice.toFixed(2); // Умножаем цену на количество и обновляем в массиве товаров
+    }
+}
+
 function calculateTotalPrice() {
     let totalPrice = 0;
     items.forEach(item => {
-        totalPrice += item.price * item.quantity;
+        totalPrice += parseFloat(item.price);
     });
     return totalPrice;
 }
