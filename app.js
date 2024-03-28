@@ -83,16 +83,13 @@ function calculateTotalPrice() {
     });
     return totalPrice;
 }
-totalButton.addEventListener('click', function() {
-    items = [];
-    totalButton.style.display = 'none'; // Скрываем кнопку при нажатии
-});
+
 
 document.getElementById("btn1").addEventListener("click", function(){
 	toggleItem(this, "item1", 58, 1);
 });
 document.getElementById("btn2").addEventListener("click", function(){
-	toggleItem(this, "item2", 68);
+	toggleItem(this, "item2", 68, 2);
 });
 document.getElementById("btn3").addEventListener("click", function(){
 	toggleItem(this, "item3", 105);
