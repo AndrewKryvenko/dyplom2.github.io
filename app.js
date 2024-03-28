@@ -61,7 +61,7 @@ let items = [];
 function toggleItem(btn, itemId, price){
     let item = items.find(i => i.id === itemId);
     if(!item){
-        let newItem = {id: itemId, price: price};
+        let newItem = {id: itemId, price: price, quantity: 1}; // Добавляем поле quantity с начальным значением 1
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
@@ -74,7 +74,7 @@ function toggleItem(btn, itemId, price){
     
     let totalPrice = calculateTotalPrice();
     if(totalPrice > 0){
-        tg.MainButton.setText(`Загальна вартість: ${totalPrice}`);
+        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)}`); // Обновляем текст кнопки с учётом общей цены
         if(!tg.MainButton.isVisible){
             tg.MainButton.show();
         }
