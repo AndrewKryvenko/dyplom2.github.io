@@ -45,15 +45,17 @@ for (let i = 0; i < minusBtns.length; i++) {
 
 let items = [];
 
-function toggleItem(btn, itemId, price) {
+function toggleItem(btn, itemId, price, index) {
     let itemIndex = items.findIndex(i => i.id === itemId);
+    let quantity = parseInt(quantityDisplays[index].innerText); // Получаем текущее количество товара
     if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price, quantity: 1 };
+        let newItem = { id: itemId, price: price, quantity: quantity };
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
     } else {
-        items[itemIndex].quantity++; // Увеличиваем количество товара на 1
+        items.splice(itemIndex, 1); // Удаляем элемент из массива
+        quantityDisplays[index].innerText = 1; // Обнуляем количество товара на экране
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
     }
