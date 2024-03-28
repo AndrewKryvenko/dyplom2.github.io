@@ -62,7 +62,7 @@ let items = [];
 function toggleItem(btn, itemId, price, quantity) {
     let itemIndex = items.findIndex(i => i.id === itemId);
     if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price * quantity, quantity: quantity };
+        let newItem = { id: itemId, price: price, quantity: quantity };
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
@@ -76,7 +76,7 @@ function toggleItem(btn, itemId, price, quantity) {
 function calculateTotalPrice() {
     let totalPrice = 0;
     items.forEach(item => {
-        totalPrice += item.price;
+        totalPrice += item.price * item.quantity;
     });
     return totalPrice;
 }
@@ -85,6 +85,7 @@ totalButton.addEventListener('click', function() {
     items = []; // Очищаем массив товаров
     totalButton.hide(); // Скрываем кнопку "Загальна вартість"
 });
+
 document.getElementById("btn1").addEventListener("click", function(){
 	toggleItem(this, "item1", 58, 1);
 });
