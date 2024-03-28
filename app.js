@@ -389,19 +389,19 @@ document.getElementById("btn92").addEventListener("click", function(){
 	}
 
 	// Присваиваем обработчики событий для всех кнопок минус и плюс
-	for (let i = 0; i < minusBtns.length; i++) {
-		minusBtns[i].addEventListener("click", function() {
-			updateQuantity(false, i);
-		});
+for (let i = 0; i < minusBtns.length; i++) {
+    minusBtns[i].addEventListener("click", function() {
+        updateQuantity(false, i);
+    });
 
-		plusBtns[i].addEventListener("click", function() {
-			updateQuantity(true, i);
-		});
+    plusBtns[i].addEventListener("click", function() {
+        updateQuantity(true, i);
+    });
 
-		addButton[i].addEventListener("click", function() {
-			updateTotalPrice(i);
-		});
-	}
+    addButton[i].addEventListener("click", function() {
+        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText));
+    });
+}
 
 
 
