@@ -7,10 +7,10 @@ tg.MainButton.color = '#ffbb00';
 
 let items = [];
 
-function toggleItem(btn, itemId, price){
+function toggleItem(btn, itemId, price) {
     let item = items.find(i => i.id === itemId);
-    if(!item){
-        let newItem = {id: itemId, price: price};
+    if (!item) {
+        let newItem = { id: itemId, price: price };
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
@@ -20,11 +20,11 @@ function toggleItem(btn, itemId, price){
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
     }
-    
+
     let totalPrice = calculateTotalPrice();
-    if(totalPrice > 0){
+    if (totalPrice > 0) {
         tg.MainButton.setText(`Загальна вартість: ${totalPrice}`);
-        if(!tg.MainButton.isVisible){
+        if (!tg.MainButton.isVisible) {
             tg.MainButton.show();
         }
     } else {
@@ -363,19 +363,18 @@ document.getElementById("btn92").addEventListener("click", function(){
 	let priceDisplays = document.querySelectorAll('.price');
 
 	// Функция для обновления количества товара
-function updateQuantity(increment, index) {
-    let quantity = parseInt(quantityDisplays[index].innerText);
-    if (increment) {
-        quantity++;
-    } else {
-        if (quantity > 1) {
-            quantity--;
-        }
-    }
-    quantityDisplays[index].innerText = quantity;
-    updateTotalPrice(index, quantity); // Передаем количество товара для обновления цены
-}
-
+	function updateQuantity(increment, index) {
+		let quantity = parseInt(quantityDisplays[index].innerText);
+		if (increment) {
+			quantity++;
+		} else {
+			if (quantity > 1) {
+				quantity--;
+			}
+		}
+		quantityDisplays[index].innerText = quantity;
+		updateTotalPrice(index);
+	}
 
 	// Функция для обновления цены
 	function updateTotalPrice(index) {
@@ -388,7 +387,6 @@ function updateQuantity(increment, index) {
 			totalPrice = initialPrice;
 		}
 		priceDisplays[index].innerText = totalPrice.toFixed(2) + " грн";
-		updateMainButtonTotalPrice();
 	}
 
 	// Присваиваем обработчики событий для всех кнопок минус и плюс
@@ -406,17 +404,7 @@ function updateQuantity(increment, index) {
 		});
 	}
 
-	// Функция для обновления общей цены
-function updateMainButtonTotalPrice() {
-    let totalQuantity = Array.from(quantityDisplays).reduce((total, display) => total + parseInt(display.innerText), 0);
-    let totalPrice = Array.from(priceDisplays).reduce((total, display) => {
-        let price = parseFloat(display.innerText.replace(" грн", ""));
-        return total + price;
-    }, 0);
-    tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн за ${totalQuantity} товарів`);
-}
 
-	updateMainButtonTotalPrice();
 
 
 	Telegram.WebApp.onEvent("mainButtonClicked", function() {
