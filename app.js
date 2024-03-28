@@ -48,7 +48,7 @@ let items = [];
 function toggleItem(btn, itemId, price){
     let item = items.find(i => i.id === itemId);
     if(!item){
-        let newItem = {id: itemId, price: price, quantity: 1}; // Добавляем свойство quantity с начальным значением 1
+        let newItem = {id: itemId, price: price, quantity: 1};
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
