@@ -93,14 +93,6 @@ Telegram.WebApp.onEvent("mainButtonClicked", function(){
     tg.sendData(JSON.stringify(data));
 });
 
-function calculateTotalPrice() {
-    let totalPrice = 0;
-    items.forEach(item => {
-        totalPrice += item.price * item.quantity;
-    });
-    return totalPrice;
-}
-
 
 document.getElementById("btn1").addEventListener("click", function(){
 	toggleItem(this, "item1", 58, 1);
