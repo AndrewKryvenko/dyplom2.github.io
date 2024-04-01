@@ -57,7 +57,18 @@ function toggleItem(btn, itemId, price, index) {
         items[itemIndex].quantity = quantity;
     }
     updateMainButton(); // Обновляем отображение главной кнопки
+sendDataToBot(); // Отправляем данные в бот
 }
+
+
+function sendDataToBot() {
+    let data = {
+        items: items.map(item => ({ id: item.id, price: item.price, quantity: item.quantity })),
+        totalPrice: calculateTotalPrice(),
+    };
+    tg.sendData(JSON.stringify(data));
+}
+
 
 function removeItem(itemId, price) {
     let itemIndex = items.findIndex(i => i.id === itemId);
@@ -88,15 +99,6 @@ for (let i = 0; i < minusBtns.length; i++) {
         toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
     });
 }
-
-
-Telegram.WebApp.onEvent("mainButtonClicked", function(){
-    let data = {
-        items: items.map(item => ({id: item.id, price: item.price, quantity: item.quantity})),
-        totalPrice: calculateTotalPrice(),
-    };
-    tg.sendData(JSON.stringify(data));
-});
 
 document.getElementById("btn1").addEventListener("click", function(){
 	toggleItem(this, "item1", 58, 1);
