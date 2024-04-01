@@ -11,7 +11,6 @@ let plusBtns = document.querySelectorAll('.plus-btn');
 let quantityDisplays = document.querySelectorAll('.quantity');
 let addButton = document.querySelectorAll('.addButton');
 let priceDisplays = document.querySelectorAll('.price');
-let totalButton = document.getElementById('totalButton');
 
 // Функция для обновления количества товара
 function updateQuantity(increment, index) {
@@ -26,76 +25,64 @@ function updateQuantity(increment, index) {
     quantityDisplays[index].innerText = quantity;
 }
 
-// Функция для отображения общей стоимости
-function updateTotalPrice() {
-    let totalPrice = calculateTotalPrice();
-    if (totalPrice > 0) {
-        totalButton.innerText = `Загальна вартість: ${totalPrice.toFixed(2)} грн`;
-        if (!totalButton.isVisible) {
-            totalButton.show();
-        }
-    } else {
-        totalButton.hide();
-    }
-}
 
 // Присваиваем обработчики событий для всех кнопок минус и плюс
 for (let i = 0; i < minusBtns.length; i++) {
     minusBtns[i].addEventListener("click", function() {
         updateQuantity(false, i);
-        updateTotalPrice(); // Обновляем общую стоимость при изменении количества товара
-        updateItemPrice(i); // Обновляем цену товара в корзине при изменении количества товара
     });
 
     plusBtns[i].addEventListener("click", function() {
         updateQuantity(true, i);
-        updateTotalPrice(); // Обновляем общую стоимость при изменении количества товара
-        updateItemPrice(i); // Обновляем цену товара в корзине при изменении количества товара
     });
 
     addButton[i].addEventListener("click", function() {
-        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), parseInt(quantityDisplays[i].innerText));
-        updateTotalPrice(); // Обновляем общую стоимость при добавлении или удалении товара
+        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
     });
 }
 
+
 let items = [];
 
-function toggleItem(btn, itemId, price, quantity) {
+function toggleItem(btn, itemId, price, index) {
     let itemIndex = items.findIndex(i => i.id === itemId);
     if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price * quantity, quantity: quantity }; // Умножаем цену на количество
+        let newItem = { id: itemId, price: price, quantity: parseInt(quantityDisplays[index].innerText) };
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
     } else {
-        items.splice(itemIndex, 1); // Удаляем товар из массива
+        items[itemIndex].quantity = parseInt(quantityDisplays[index].innerText); // Обновляем количество товара
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
     }
-}
-
-// Функция для обновления цены товара в корзине
-function updateItemPrice(index) {
-    let item = items[index];
-    if (item) {
-        let newPrice = parseFloat(priceDisplays[index].innerText) * parseInt(quantityDisplays[index].innerText);
-        item.price = newPrice.toFixed(2); // Умножаем цену на количество и обновляем в массиве товаров
+    
+    let totalPrice = calculateTotalPrice();
+    if (totalPrice > 0) {
+        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
+        if (!tg.MainButton.isVisible) {
+            tg.MainButton.show();
+        }
+    } else {
+        tg.MainButton.hide();
     }
 }
+
+Telegram.WebApp.onEvent("mainButtonClicked", function(){
+    let data = {
+        items: items.map(item => ({id: item.id, price: item.price, quantity: item.quantity})),
+        totalPrice: calculateTotalPrice(),
+    };
+    tg.sendData(JSON.stringify(data));
+});
 
 function calculateTotalPrice() {
     let totalPrice = 0;
     items.forEach(item => {
-        totalPrice += parseFloat(item.price);
+        totalPrice += item.price * item.quantity;
     });
     return totalPrice;
 }
-
-totalButton.addEventListener('click', function() {
-    items = []; // Очищаем массив товаров
-    totalButton.hide(); // Скрываем кнопку "Загальна вартість"
-});
 
 
 document.getElementById("btn1").addEventListener("click", function(){
