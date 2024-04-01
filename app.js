@@ -5,14 +5,14 @@ tg.expand();
 tg.MainButton.textColor = '#FFFFFF';
 tg.MainButton.color = '#ffbb00';
 
-// Находим все кнопки minusBtn и plusBtn
 let minusBtns = document.querySelectorAll('.minus-btn');
 let plusBtns = document.querySelectorAll('.plus-btn');
 let quantityDisplays = document.querySelectorAll('.quantity');
 let addButton = document.querySelectorAll('.addButton');
 let priceDisplays = document.querySelectorAll('.price');
 
-// Функция для обновления количества товара
+let items = [];
+
 function updateQuantity(increment, index) {
     let quantity = parseInt(quantityDisplays[index].innerText);
     if (increment) {
@@ -23,6 +23,7 @@ function updateQuantity(increment, index) {
         }
     }
     quantityDisplays[index].innerText = quantity;
+    updateMainButton(); // Обновляем отображение главной кнопки
 }
 
 function updateMainButton() {
@@ -30,9 +31,11 @@ function updateMainButton() {
     if (totalPrice > 0) {
         tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
         if (!tg.MainButton.isVisible) {
-            tg.MainButton.isVisible = true; // Показываем кнопку, если общая цена больше нуля
+            tg.MainButton.isVisible = true;
         }
-    } // Убираем эту ветку, чтобы кнопка оставалась видимой, даже если общая цена равна нулю
+    } else {
+        tg.MainButton.isVisible = false;
+    }
 }
 
 function calculateTotalPrice() {
@@ -43,27 +46,6 @@ function calculateTotalPrice() {
     return totalPrice;
 }
 
-// Присваиваем обработчики событий для всех кнопок минус и плюс
-for (let i = 0; i < minusBtns.length; i++) {
-    minusBtns[i].addEventListener("click", function() {
-        updateQuantity(false, i);
-        updateMainButton(); // Обновляем отображение главной кнопки
-    });
-
-    plusBtns[i].addEventListener("click", function() {
-        updateQuantity(true, i);
-        updateMainButton(); // Обновляем отображение главной кнопки
-    });
-
-    // Добавляем обработчик события только для кнопок "Добавить"
-    addButton[i].addEventListener("click", function() {
-        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
-        updateMainButton(); // Обновляем отображение главной кнопки
-    });
-}
-
-let items = [];
-
 function toggleItem(btn, itemId, price, index) {
     let itemIndex = items.findIndex(i => i.id === itemId);
     let quantity = parseInt(quantityDisplays[index].innerText);
@@ -72,8 +54,39 @@ function toggleItem(btn, itemId, price, index) {
         let newItem = { id: itemId, price: price, quantity: quantity };
         items.push(newItem);
     } else {
-        items[itemIndex].quantity = quantity; // Обновляем количество товара
+        items[itemIndex].quantity = quantity;
     }
+    updateMainButton(); // Обновляем отображение главной кнопки
+}
+
+function removeItem(itemId, price) {
+    let itemIndex = items.findIndex(i => i.id === itemId);
+    if (itemIndex !== -1) {
+        let currentQuantity = items[itemIndex].quantity;
+        if (currentQuantity > 0) {
+            items[itemIndex].quantity--; // Уменьшаем количество товара
+            let itemPrice = items[itemIndex].price;
+            let totalPrice = calculateTotalPrice(); // Пересчитываем общую цену
+            totalPrice -= itemPrice; // Убираем цену товара из общей цены
+            tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
+        }
+        updateMainButton(); // Обновляем отображение главной кнопки
+    }
+}
+
+// Присваиваем обработчики событий для всех кнопок минус и плюс
+for (let i = 0; i < minusBtns.length; i++) {
+    minusBtns[i].addEventListener("click", function() {
+        updateQuantity(false, i);
+    });
+
+    plusBtns[i].addEventListener("click", function() {
+        updateQuantity(true, i);
+    });
+
+    addButton[i].addEventListener("click", function() {
+        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
+    });
 }
 
 
