@@ -5,25 +5,11 @@ tg.expand();
 tg.MainButton.textColor = '#FFFFFF';
 tg.MainButton.color = '#ffbb00';
 
-// Находим все кнопки minusBtn и plusBtn
-let minusBtns = document.querySelectorAll('.minus-btn');
-let plusBtns = document.querySelectorAll('.plus-btn');
+let items = [];
+
 let quantityDisplays = document.querySelectorAll('.quantity');
 let addButton = document.querySelectorAll('.addButton');
 let priceDisplays = document.querySelectorAll('.price');
-
-// Функция для обновления количества товара
-function updateQuantity(increment, index) {
-    let quantity = parseInt(quantityDisplays[index].innerText);
-    if (increment) {
-        quantity++;
-    } else {
-        if (quantity > 1) {
-            quantity--;
-        }
-    }
-    quantityDisplays[index].innerText = quantity;
-}
 
 function updateMainButton() {
     let totalPrice = calculateTotalPrice();
@@ -45,61 +31,56 @@ function calculateTotalPrice() {
     return totalPrice;
 }
 
+function toggleItem(btn, itemId, price, index) {
+    let itemIndex = items.findIndex(i => i.id === itemId);
+    if (itemIndex === -1) {
+        let newItem = { id: itemId, price: price, quantity: 1 };
+        items.push(newItem);
+        btn.classList.add('added-to-cart');
+        btn.innerText = "Прибрати";
+    } else {
+        items.splice(itemIndex, 1);
+        btn.classList.remove('added-to-cart');
+        btn.innerText = "Додати";
+    }
+    updateMainButton();
+}
+
+// Присваиваем обработчики событий для всех кнопок добавления
+for (let i = 0; i < addButton.length; i++) {
+    addButton[i].addEventListener("click", function() {
+        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
+    });
+}
+
+// Функция для обновления количества товара
+function updateQuantity(increment, index) {
+    let quantity = parseInt(quantityDisplays[index].innerText);
+    if (increment) {
+        quantity++;
+    } else {
+        if (quantity > 1) {
+            quantity--;
+        }
+    }
+    quantityDisplays[index].innerText = quantity;
+    updateMainButton();
+}
+
 // Присваиваем обработчики событий для всех кнопок минус и плюс
+let minusBtns = document.querySelectorAll('.minus-btn');
+let plusBtns = document.querySelectorAll('.plus-btn');
+
 for (let i = 0; i < minusBtns.length; i++) {
     minusBtns[i].addEventListener("click", function() {
         updateQuantity(false, i);
-        toggleItem(addButton[i], "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
-        updateMainButton();
     });
 
     plusBtns[i].addEventListener("click", function() {
         updateQuantity(true, i);
-        toggleItem(addButton[i], "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
-        updateMainButton();
-    });
-
-    addButton[i].addEventListener("click", function() {
-        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
-        updateMainButton();
     });
 }
 
-
-let items = [];
-
-function toggleItem(btn, itemId, price, index) {
-    let itemIndex = items.findIndex(i => i.id === itemId);
-    if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price, quantity: parseInt(quantityDisplays[index].innerText) };
-        items.push(newItem);
-        btn.classList.add('added-to-cart');
-        btn.innerText = "Прибрати";
-	quantityDisplay.innerText = "1";
-    } else {
-        items[itemIndex].quantity = parseInt(quantityDisplays[index].innerText); // Обновляем количество товара
-        btn.classList.remove('added-to-cart');
-        btn.innerText = "Додати";
-    }
-    
-    let totalPrice = calculateTotalPrice();
-    if (totalPrice > 0) {
-        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
-        if (!tg.MainButton.isVisible) {
-            tg.MainButton.show();
-        }
-    } else {
-        tg.MainButton.hide();
-    }
-}
-
-Telegram.WebApp.onEvent("mainButtonClicked", function(){
-    let data = {
-        items: items.map(item => ({id: item.id, price: item.price, quantity: item.quantity})),
-        totalPrice: calculateTotalPrice(),
-    };
-    tg.sendData(JSON.stringify(data));
-});
 
 document.getElementById("btn1").addEventListener("click", function(){
 	toggleItem(this, "item1", 58, 1);
@@ -410,6 +391,5 @@ document.getElementById("btn91").addEventListener("click", function(){
 document.getElementById("btn92").addEventListener("click", function(){
 	toggleItem(this, "item92", 72);
 });
-
 
 
