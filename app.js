@@ -25,19 +25,43 @@ function updateQuantity(increment, index) {
     quantityDisplays[index].innerText = quantity;
 }
 
+function updateMainButton() {
+    let totalPrice = calculateTotalPrice();
+    if (totalPrice > 0) {
+        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
+        if (!tg.MainButton.isVisible) {
+            tg.MainButton.show();
+        }
+    } else {
+        tg.MainButton.hide();
+    }
+}
+
+function calculateTotalPrice() {
+    let totalPrice = 0;
+    items.forEach(item => {
+        totalPrice += item.price * item.quantity;
+    });
+    return totalPrice;
+}
 
 // Присваиваем обработчики событий для всех кнопок минус и плюс
 for (let i = 0; i < minusBtns.length; i++) {
     minusBtns[i].addEventListener("click", function() {
         updateQuantity(false, i);
+        toggleItem(addButton[i], "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
+        updateMainButton();
     });
 
     plusBtns[i].addEventListener("click", function() {
         updateQuantity(true, i);
+        toggleItem(addButton[i], "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
+        updateMainButton();
     });
 
     addButton[i].addEventListener("click", function() {
         toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
+        updateMainButton();
     });
 }
 
@@ -56,7 +80,6 @@ function toggleItem(btn, itemId, price, index) {
         items[itemIndex].quantity = parseInt(quantityDisplays[index].innerText); // Обновляем количество товара
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
-	totalPrice -= price * items[itemIndex].quantity;
     }
     
     let totalPrice = calculateTotalPrice();
@@ -77,15 +100,6 @@ Telegram.WebApp.onEvent("mainButtonClicked", function(){
     };
     tg.sendData(JSON.stringify(data));
 });
-
-function calculateTotalPrice() {
-    let totalPrice = 0;
-    items.forEach(item => {
-        totalPrice += item.price * item.quantity;
-    });
-    return totalPrice;
-}
-
 
 document.getElementById("btn1").addEventListener("click", function(){
 	toggleItem(this, "item1", 58, 1);
