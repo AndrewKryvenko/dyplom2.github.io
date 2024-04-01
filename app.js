@@ -5,53 +5,12 @@ tg.expand();
 tg.MainButton.textColor = '#FFFFFF';
 tg.MainButton.color = '#ffbb00';
 
-let items = [];
-
+// Находим все кнопки minusBtn и plusBtn
+let minusBtns = document.querySelectorAll('.minus-btn');
+let plusBtns = document.querySelectorAll('.plus-btn');
 let quantityDisplays = document.querySelectorAll('.quantity');
 let addButton = document.querySelectorAll('.addButton');
 let priceDisplays = document.querySelectorAll('.price');
-
-function updateMainButton() {
-    let totalPrice = calculateTotalPrice();
-    if (totalPrice > 0) {
-        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
-        if (!tg.MainButton.isVisible) {
-            tg.MainButton.show();
-        }
-    } else {
-        tg.MainButton.hide();
-    }
-}
-
-function calculateTotalPrice() {
-    let totalPrice = 0;
-    items.forEach(item => {
-        totalPrice += item.price * item.quantity;
-    });
-    return totalPrice;
-}
-
-function toggleItem(btn, itemId, price, index) {
-    let itemIndex = items.findIndex(i => i.id === itemId);
-    if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price, quantity: 1 };
-        items.push(newItem);
-        btn.classList.add('added-to-cart');
-        btn.innerText = "Прибрати";
-    } else {
-        items.splice(itemIndex, 1);
-        btn.classList.remove('added-to-cart');
-        btn.innerText = "Додати";
-    }
-    updateMainButton();
-}
-
-// Присваиваем обработчики событий для всех кнопок добавления
-for (let i = 0; i < addButton.length; i++) {
-    addButton[i].addEventListener("click", function() {
-        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
-    });
-}
 
 // Функция для обновления количества товара
 function updateQuantity(increment, index) {
@@ -64,13 +23,10 @@ function updateQuantity(increment, index) {
         }
     }
     quantityDisplays[index].innerText = quantity;
-    updateMainButton();
 }
 
-// Присваиваем обработчики событий для всех кнопок минус и плюс
-let minusBtns = document.querySelectorAll('.minus-btn');
-let plusBtns = document.querySelectorAll('.plus-btn');
 
+// Присваиваем обработчики событий для всех кнопок минус и плюс
 for (let i = 0; i < minusBtns.length; i++) {
     minusBtns[i].addEventListener("click", function() {
         updateQuantity(false, i);
@@ -79,6 +35,71 @@ for (let i = 0; i < minusBtns.length; i++) {
     plusBtns[i].addEventListener("click", function() {
         updateQuantity(true, i);
     });
+
+    addButton[i].addEventListener("click", function() {
+        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
+    });
+}
+
+
+let items = [];
+
+function calculateTotalPrice() {
+    let totalPrice = 0;
+    items.forEach(item => {
+        totalPrice += item.price * item.quantity;
+    });
+    return totalPrice.toFixed(2); // Округляем до двух знаков после запятой
+}
+
+function toggleItem(btn, itemId, price, quantityDisplay) {
+    let item = items.find(i => i.id === itemId);
+    if (!item) {
+        let newItem = { id: itemId, price: price, quantity: 1 };
+        items.push(newItem);
+        btn.classList.add('added-to-cart');
+        btn.innerText = "Прибрати";
+		quantityDisplay.innerText = "1"; // Сброс количества до 1
+    } else {
+        let index = items.indexOf(item);
+        items.splice(index, 1);
+        btn.classList.remove('added-to-cart');
+        btn.innerText = "Додати";
+        
+    }
+    
+    let totalPrice = calculateTotalPrice();
+    if (totalPrice > 0) {
+        tg.MainButton.setText(`Загальна вартість: ${totalPrice}`);
+        if (!tg.MainButton.isVisible) {
+            tg.MainButton.show();
+        }
+    } else {
+        tg.MainButton.hide();
+    }
+}
+
+for (let i = 0; i < addButton.length; i++) {
+    addButton[i].addEventListener("click", function() {
+        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), quantityDisplays[i]);
+    });
+}
+
+
+Telegram.WebApp.onEvent("mainButtonClicked", function(){
+    let data = {
+        items: items.map(item => ({id: item.id, price: item.price, quantity: item.quantity})),
+        totalPrice: calculateTotalPrice(),
+    };
+    tg.sendData(JSON.stringify(data));
+});
+
+function calculateTotalPrice() {
+    let totalPrice = 0;
+    items.forEach(item => {
+        totalPrice += item.price * item.quantity;
+    });
+    return totalPrice;
 }
 
 
@@ -391,5 +412,6 @@ document.getElementById("btn91").addEventListener("click", function(){
 document.getElementById("btn92").addEventListener("click", function(){
 	toggleItem(this, "item92", 72);
 });
+
 
 
