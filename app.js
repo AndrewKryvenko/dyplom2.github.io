@@ -27,14 +27,13 @@ function updateQuantity(increment, index) {
 
 function updateMainButton() {
     let totalPrice = calculateTotalPrice();
-    if (totalPrice > 0) {
-        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
-        if (!tg.MainButton.isVisible) {
-            tg.MainButton.show();
-        }
-    } else {
-        tg.MainButton.hide();
+if (totalPrice > 0) {
+    tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
+    if (!tg.MainButton.isVisible) {
+        tg.MainButton.isVisible = true; // Попробуйте установить isVisible в true
     }
+} else {
+    tg.MainButton.isVisible = false; // Попробуйте установить isVisible в false
 }
 
 function calculateTotalPrice() {
