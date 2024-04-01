@@ -44,28 +44,36 @@ for (let i = 0; i < minusBtns.length; i++) {
 
 let items = [];
 
-function toggleItem(btn, itemId, price, index) {
-    let itemIndex = items.findIndex(i => i.id === itemId);
-    if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price, quantity: parseInt(quantityDisplays[index].innerText) };
+function toggleItem(btn, itemId, price, quantityDisplay) {
+    let item = items.find(i => i.id === itemId);
+    if (!item) {
+        let newItem = { id: itemId, price: price, quantity: 1 };
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
     } else {
-        items[itemIndex].quantity = parseInt(quantityDisplays[index].innerText); // Обновляем количество товара
+        let index = items.indexOf(item);
+        items.splice(index, 1);
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
+        quantityDisplay.innerText = "1"; // Сброс количества до 1
     }
     
     let totalPrice = calculateTotalPrice();
     if (totalPrice > 0) {
-        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
+        tg.MainButton.setText(`Загальна вартість: ${totalPrice}`);
         if (!tg.MainButton.isVisible) {
             tg.MainButton.show();
         }
     } else {
         tg.MainButton.hide();
     }
+}
+
+for (let i = 0; i < addButton.length; i++) {
+    addButton[i].addEventListener("click", function() {
+        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), quantityDisplays[i]);
+    });
 }
 
 
