@@ -75,7 +75,7 @@ function toggleItem(btn, itemId, price, quantityDisplay) {
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
-	quantityDisplay.innerText = "1"; // Сброс количества до 1
+        quantityDisplay.innerText = "1"; // Сброс количества до 1
     } else {
         let index = items.indexOf(item);
         items.splice(index, 1);
@@ -92,6 +92,7 @@ function toggleItem(btn, itemId, price, quantityDisplay) {
     } else {
         tg.MainButton.hide();
     }
+    updateMainButton(); // Вызов функции после завершения операции изменения данных
 }
 
 for (let i = 0; i < addButton.length; i++) {
