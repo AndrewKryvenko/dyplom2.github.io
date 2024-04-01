@@ -18,7 +18,7 @@ function updateQuantity(increment, index) {
     if (increment) {
         quantity++;
     } else {
-        if (quantity > 1) {
+        if (quantity > 0) {
             quantity--;
         }
     }
@@ -70,19 +70,18 @@ let items = [];
 
 function toggleItem(btn, itemId, price, index) {
     let itemIndex = items.findIndex(i => i.id === itemId);
+    let quantity = parseInt(quantityDisplays[index].innerText);
+
     if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price, quantity: parseInt(quantityDisplays[index].innerText) };
+        let newItem = { id: itemId, price: price, quantity: quantity };
         items.push(newItem);
-        btn.classList.add('added-to-cart');
-        btn.innerText = "Прибрати";
-	quantityDisplay.innerText = "1";
+        quantityDisplay.innerText = quantity;
     } else {
-        items[itemIndex].quantity = parseInt(quantityDisplays[index].innerText); // Обновляем количество товара
-        btn.classList.remove('added-to-cart');
-        btn.innerText = "Додати";
+        items[itemIndex].quantity = quantity; // Обновляем количество товара
     }
     
-    let totalPrice = calculateTotalPrice();
+    let totalPrice = calculateTotalPrice(); // Пересчитываем общую цену
+
     if (totalPrice > 0) {
         tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
         if (!tg.MainButton.isVisible) {
@@ -410,6 +409,5 @@ document.getElementById("btn91").addEventListener("click", function(){
 document.getElementById("btn92").addEventListener("click", function(){
 	toggleItem(this, "item92", 72);
 });
-
 
 
