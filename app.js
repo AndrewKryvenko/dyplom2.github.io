@@ -23,11 +23,7 @@ function updateQuantity(increment, index) {
         }
     }
     quantityDisplays[index].innerText = quantity;
-
-    // Обновление цены при изменении количества
-    let price = parseFloat(priceDisplays[index].innerText);
-    let totalPrice = price * quantity;
-    priceDisplays[index].innerText = totalPrice.toFixed(2); // Фиксация до двух знаков после запятой
+updatePrice(index, quantity);
 }
 
 
@@ -48,6 +44,13 @@ for (let i = 0; i < minusBtns.length; i++) {
 
 
 let items = [];
+
+function calculateTotalPrice() {
+    let totalPrice = 0;
+    items.forEach(item => {
+        totalPrice += item.price * item.quantity;
+    });
+}
 
 function toggleItem(btn, itemId, price, quantityDisplay) {
     let item = items.find(i => i.id === itemId);
