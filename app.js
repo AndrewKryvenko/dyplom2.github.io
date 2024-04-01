@@ -52,11 +52,11 @@ function toggleItem(btn, itemId, price, index) {
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
 	quantityDisplay.innerText = "1";
-	totalPrice -= price * items[itemIndex].quantity;
     } else {
         items[itemIndex].quantity = parseInt(quantityDisplays[index].innerText); // Обновляем количество товара
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
+	totalPrice -= price * items[itemIndex].quantity;
     }
     
     let totalPrice = calculateTotalPrice();
