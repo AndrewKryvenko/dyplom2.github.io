@@ -23,6 +23,11 @@ function updateQuantity(increment, index) {
         }
     }
     quantityDisplays[index].innerText = quantity;
+
+    // Обновление цены при изменении количества
+    let price = parseFloat(priceDisplays[index].innerText);
+    let totalPrice = price * quantity;
+    priceDisplays[index].innerText = totalPrice.toFixed(2); // Фиксация до двух знаков после запятой
 }
 
 
