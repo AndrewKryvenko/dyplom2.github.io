@@ -46,30 +46,28 @@ let items = [];
 
 function toggleItem(btn, itemId, price, index) {
     let itemIndex = items.findIndex(i => i.id === itemId);
-    let totalPrice; // объявляем переменную totalPrice здесь
-
     if (itemIndex === -1) {
         let newItem = { id: itemId, price: price, quantity: parseInt(quantityDisplays[index].innerText) };
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
-        quantityDisplay.innerText = "1";
+	quantityDisplay.innerText = "1";
     } else {
         items[itemIndex].quantity = parseInt(quantityDisplays[index].innerText); // Обновляем количество товара
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
-        totalPrice -= price * items[itemIndex].quantity; // убираем цену товара из общей цены
-    }
-    
-    totalPrice = calculateTotalPrice(); // пересчитываем общую цену после изменений
-
-    if (totalPrice > 0) {
-        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
-        if (!tg.MainButton.isVisible) {
-            tg.MainButton.show();
+	
+        // Обновляем общую цену
+        let totalPrice = calculateTotalPrice();
+        
+        if (totalPrice > 0) {
+            tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
+            if (!tg.MainButton.isVisible) {
+                tg.MainButton.show();
+            }
+        } else {
+            tg.MainButton.hide();
         }
-    } else {
-        tg.MainButton.hide();
     }
 }
 
