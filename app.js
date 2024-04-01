@@ -45,21 +45,24 @@ for (let i = 0; i < minusBtns.length; i++) {
 let items = [];
 
 function toggleItem(btn, itemId, price, index) {
+    let totalPrice; // объявляем totalPrice здесь
+
     let itemIndex = items.findIndex(i => i.id === itemId);
     if (itemIndex === -1) {
         let newItem = { id: itemId, price: price, quantity: parseInt(quantityDisplays[index].innerText) };
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
-	quantityDisplay.innerText = "1";
+	    quantityDisplay.innerText = "1";
     } else {
         items[itemIndex].quantity = parseInt(quantityDisplays[index].innerText); // Обновляем количество товара
         btn.classList.remove('added-to-cart');
         btn.innerText = "Додати";
-	totalPrice -= price * items[itemIndex].quantity;
+	    totalPrice -= price * items[itemIndex].quantity; // убираем цену товара из общей цены
     }
     
-    let totalPrice = calculateTotalPrice();
+    totalPrice = calculateTotalPrice(); // пересчитываем общую цену после изменений
+
     if (totalPrice > 0) {
         tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
         if (!tg.MainButton.isVisible) {
