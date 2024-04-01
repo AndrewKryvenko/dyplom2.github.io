@@ -49,21 +49,21 @@ function calculateTotalPrice() {
 for (let i = 0; i < minusBtns.length; i++) {
     minusBtns[i].addEventListener("click", function() {
         updateQuantity(false, i);
-        toggleItem(addButton[i], "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
-        updateMainButton();
+        updateMainButton(); // Обновляем отображение главной кнопки
     });
 
     plusBtns[i].addEventListener("click", function() {
         updateQuantity(true, i);
-        toggleItem(addButton[i], "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
-        updateMainButton();
+        updateMainButton(); // Обновляем отображение главной кнопки
     });
 
+    // Добавляем обработчик события только для кнопок "Добавить"
     addButton[i].addEventListener("click", function() {
         toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
-        updateMainButton();
+        updateMainButton(); // Обновляем отображение главной кнопки
     });
 }
+
 
 
 let items = [];
