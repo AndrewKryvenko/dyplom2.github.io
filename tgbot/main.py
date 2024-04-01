@@ -31,6 +31,10 @@ async def web_app(message: types.Message):
 {message_text}
 """)
 
+@dp.message_handler(content_types=types.ContentType.TEXT, state="*")
+async def handle_main_button_click(message: types.Message):
+    if message.text == "mainButtonClicked":
+        await message.answer("Получено событие нажатия на кнопку mainButton!")
 
 async def main():
     await dp.start_polling()
