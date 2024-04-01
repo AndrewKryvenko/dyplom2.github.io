@@ -14,7 +14,8 @@ let priceDisplays = document.querySelectorAll('.price');
 
 // Функция для обновления количества товара
 function updateQuantity(increment, index) {
-    let quantity = parseInt(quantityDisplays[index].innerText);
+    let quantityDisplay = quantityDisplays[index];
+    let quantity = parseInt(quantityDisplay.innerText);
     if (increment) {
         quantity++;
     } else {
@@ -22,10 +23,16 @@ function updateQuantity(increment, index) {
             quantity--;
         }
     }
-    quantityDisplays[index].innerText = quantity;
-updatePrice(index, quantity);
+    quantityDisplay.innerText = quantity;
+    updatePrice(index, quantity); // Обновляем цену при изменении количества
 }
 
+function updatePrice(index, quantity) {
+    let priceDisplay = priceDisplays[index];
+    let pricePerUnit = parseFloat(priceDisplay.innerText);
+    let totalPrice = pricePerUnit * quantity;
+    priceDisplay.innerText = totalPrice.toFixed(2); // Обновляем отображаемую цену
+}
 
 // Присваиваем обработчики событий для всех кнопок минус и плюс
 for (let i = 0; i < minusBtns.length; i++) {
@@ -38,10 +45,9 @@ for (let i = 0; i < minusBtns.length; i++) {
     });
 
     addButton[i].addEventListener("click", function() {
-        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), i);
+        toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), quantityDisplays[i]);
     });
 }
-
 
 let items = [];
 
@@ -50,6 +56,7 @@ function calculateTotalPrice() {
     items.forEach(item => {
         totalPrice += item.price * item.quantity;
     });
+    return totalPrice.toFixed(2); // Округляем до двух знаков после запятой
 }
 
 function toggleItem(btn, itemId, price, quantityDisplay) {
@@ -59,7 +66,7 @@ function toggleItem(btn, itemId, price, quantityDisplay) {
         items.push(newItem);
         btn.classList.add('added-to-cart');
         btn.innerText = "Прибрати";
-	quantityDisplay.innerText = "1"; // Сброс количества до 1
+        quantityDisplay.innerText = "1"; // Сброс количества до 1
     } else {
         let index = items.indexOf(item);
         items.splice(index, 1);
@@ -83,7 +90,6 @@ for (let i = 0; i < addButton.length; i++) {
         toggleItem(this, "item" + (i + 1), parseFloat(priceDisplays[i].innerText), quantityDisplays[i]);
     });
 }
-
 
 Telegram.WebApp.onEvent("mainButtonClicked", function(){
     let data = {
