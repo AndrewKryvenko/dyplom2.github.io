@@ -10,7 +10,7 @@ dp = Dispatcher(bot)
 async def start(message: types.Message):
     item1 = KeyboardButton(text="Вибрати товар", web_app=WebAppInfo(url='https://andrewkryvenko.github.io/dyplom2.github.io//'))
     keyboard = ReplyKeyboardMarkup(keyboard=[[item1]], resize_keyboard=True)
-    await message.answer("Вітаємо! 🙌🏼\n Натисність на кнопку МЕНЮ знизу зліва щоб замовити їжу👇🏼", reply_markup=keyboard, parse_mode="Markdown")
+    await bot.send_message(message.from_user.id, "Вітаємо! 🙌🏼\n Натисність на кнопку МЕНЮ знизу зліва щоб замовити їжу👇🏼", reply_markup=keyboard, parse_mode="Markdown")
 
 @dp.message_handler(content_types=types.ContentType.TEXT)
 async def web_app(message: types.Message):
