@@ -45,32 +45,39 @@ for (let i = 0; i < minusBtns.length; i++) {
 let items = [];
 
 function toggleItem(btn, itemId, price, index) {
-    let totalPrice; // объявляем totalPrice здесь
-
     let itemIndex = items.findIndex(i => i.id === itemId);
-    if (itemIndex === -1) {
-        let newItem = { id: itemId, price: price, quantity: parseInt(quantityDisplays[index].innerText) };
-        items.push(newItem);
-        btn.classList.add('added-to-cart');
-        btn.innerText = "Прибрати";
-	    quantityDisplay.innerText = "1";
-    } else {
-        items[itemIndex].quantity = parseInt(quantityDisplays[index].innerText); // Обновляем количество товара
-        btn.classList.remove('added-to-cart');
-        btn.innerText = "Додати";
-	    totalPrice -= price * items[itemIndex].quantity; // убираем цену товара из общей цены
+    let quantity = parseInt(quantityDisplays[index].innerText);
+
+    if (btn.classList.contains('added-to-cart')) { // Если кнопка имеет класс 'added-to-cart', значит была нажата кнопка "Прибрати"
+        if (itemIndex !== -1) { // Если товар найден в корзине
+            items.splice(itemIndex, 1); // Удаляем товар из массива корзины
+        }
+        btn.classList.remove('added-to-cart'); // Убираем класс 'added-to-cart'
+        btn.innerText = "Додати"; // Меняем текст кнопки на "Додати"
+        quantity = 1; // Устанавливаем количество товара в 1
+    } else { // Иначе, кнопка имеет текст "Додати" и нужно добавить товар в корзину
+        if (itemIndex === -1) { // Если товар не найден в корзине
+            let newItem = { id: itemId, price: price, quantity: quantity };
+            items.push(newItem); // Добавляем товар в корзину
+        } else { // Иначе, товар найден в корзине, обновляем количество
+            items[itemIndex].quantity += quantity;
+        }
+        btn.classList.add('added-to-cart'); // Добавляем класс 'added-to-cart'
+        btn.innerText = "Прибрати"; // Меняем текст кнопки на "Прибрати"
     }
-    
-    totalPrice = calculateTotalPrice(); // пересчитываем общую цену после изменений
+
+    let totalPrice = calculateTotalPrice(); // Пересчитываем общую цену
 
     if (totalPrice > 0) {
-        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`);
+        tg.MainButton.setText(`Загальна вартість: ${totalPrice.toFixed(2)} грн`); // Устанавливаем текст кнопки
         if (!tg.MainButton.isVisible) {
-            tg.MainButton.show();
+            tg.MainButton.show(); // Показываем кнопку
         }
     } else {
-        tg.MainButton.hide();
+        tg.MainButton.hide(); // Скрываем кнопку, если общая цена <= 0
     }
+
+    quantityDisplay.innerText = quantity; // Обновляем отображение количества товара
 }
 
 Telegram.WebApp.onEvent("mainButtonClicked", function(){
