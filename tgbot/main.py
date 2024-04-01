@@ -1,6 +1,6 @@
 import asyncio
 import json
-
+import aiogram
 from aiogram import types
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.context import FSMContext
@@ -13,9 +13,9 @@ dp = Dispatcher(bot)
 
 @dp.message_handler(Command('start'))
 async def start(message: types.Message, state: FSMContext):
-    item1 = KeyboardButton(text="Вибрати товар", web_app=WebAppInfo(url='https://dyplom2.github.io/'))
+    item1 = KeyboardButton(text="Вибрати товар", web_app=WebAppInfo(url='https://andrewkryvenko.github.io/dyplom2.github.io//'))
     keyboard = ReplyKeyboardMarkup(keyboard=[[item1]], resize_keyboard=True)
-    await bot.send_message(message.from_user.id,"ТУТ ПОЧАТКОВИЙ ТЕКСТ ПРИ КОМАНДІ СТАРТ", reply_markup=keyboard, parse_mode="Markdown")
+    await bot.send_message(message.from_user.id,"Вітаємо! 🙌🏼\n Натисність на кнопку МЕНЮ знизу зліва щоб замовити їжу👇🏼", reply_markup=keyboard, parse_mode="Markdown")
 
 
 @dp.message_handler(content_types=types.ContentType.TEXT)
@@ -27,19 +27,23 @@ async def web_app(message: types.Message):
         position = int(item['id'].replace('item', ''))
         message_text += f"Позиція {position}\n"
         message_text += f"Вартість {item['price']}\n\n"
+        message_text += f"Кількість {item['quantity']}\n\n\n"
 
     message_text += f"Загальна вартість: {parsed_data['totalPrice']}"
 
-    await bot.send_message(message.from_user.id, message_text)
-    await bot.send_message('-1002022582711', f"Нове замовлення\n{message_text}")
+    await bot.send_message(callback_query.from_user.id, f"""
+{message}
+""")
+    await bot.send_message('-1002022582711', f"""
+Нове замовлення\n
+{message_text}
+""")
 
 
 async def main():
-    try:
-        await dp.start_polling()
-    finally:
-        await bot.session.close()
+        await dp.start_polling(bot)
+
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
