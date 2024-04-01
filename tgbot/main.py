@@ -6,14 +6,14 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
 bot = Bot(token="6442089419:AAG4q9RlLlpJ7w4HEKusOqTXUA18MSMaK_w")
 dp = Dispatcher(bot)
 
-@dp.message_handler(Command('start'))
+@dp.message_handler(commands=['start'])
 async def start(message: types.Message):
     item1 = KeyboardButton(text="Вибрати товар", web_app=WebAppInfo(url='https://andrewkryvenko.github.io/dyplom2.github.io//'))
     keyboard = ReplyKeyboardMarkup(keyboard=[[item1]], resize_keyboard=True)
     await message.answer("Вітаємо! 🙌🏼\n Натисність на кнопку МЕНЮ знизу зліва щоб замовити їжу👇🏼", reply_markup=keyboard, parse_mode="Markdown")
 
 @dp.message_handler(content_types=types.ContentType.TEXT)
-async def web_app(message: types.Message):
+async def handle_text(message: types.Message):
     json_data = message.text
     parsed_data = json.loads(json_data)
     message_text = ""
@@ -31,14 +31,8 @@ async def web_app(message: types.Message):
 {message_text}
 """)
 
-@dp.message_handler(content_types=types.ContentType.TEXT, state="*")
-async def handle_main_button_click(message: types.Message):
-    if message.text == "mainButtonClicked":
-        await message.answer("Получено событие нажатия на кнопку mainButton!")
-
 async def main():
     await dp.start_polling()
-
 
 if __name__ == "__main__":
     asyncio.run(main())
